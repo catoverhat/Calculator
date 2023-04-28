@@ -1,0 +1,22 @@
+button{
+    background-color: rgba(255,255,255,0.8);
+    border: none;
+    font-size: 15px;
+}
+
+.grid-span-2-col{
+grid-column: 1/3;
+}
+
+.bold{
+    font-weight: 700;
+}
+
+.operands{
+    font-size: 25px;
+}
+
+.equal{
+    background-color: rgb(255 0 0 / 60%);
+    font-size: 20px;
+}

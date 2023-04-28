@@ -1,0 +1,21 @@
+.screen{
+    grid-column: 1/5;
+    border: solid 1px #000000;
+    margin: 15px;
+    padding: 0px 3px;
+    height: 100px;
+    align-self: center;
+    display: grid;
+    grid-template-rows: 30%;
+    align-items: center;
+    justify-items: end;
+}
+
+.calculations{
+    font-size: small;
+    color: rgb(64,64,64);
+}
+
+.numbers{
+    font-size: 30px;
+}
