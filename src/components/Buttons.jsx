@@ -5,7 +5,7 @@ const Buttons = ({ buttonClicked }) => {
   return (
     <Fragment>
       <button onClick={buttonClicked} className="grid-span-2-col">
-        Clear
+        clear
       </button>
       <button onClick={buttonClicked}>&#x140A;</button>
       <button onClick={buttonClicked} className="operands">
