@@ -16,39 +16,53 @@ function App() {
 
   const clear = () => {
     setIsResult(false);
-    setCalculations({
+    setCalculations((prevState) => ({
+      ...prevState,
       value1: "0",
       operand: "",
       value2: "",
       result: "",
-    });
+    }));
   };
 
   const equal = () => {
+    const value1 = parseFloat(calculations.value1);
+    const value2 = parseFloat(calculations.value2);
 
-    if (calculations.operand === "+") {
-      setCalculations((prevState) => ({
-        ...prevState,
-        result: calculations.value1 + calculations.value2,
-      }));
-    }
-    if (calculations.operand === "-") {
-      setCalculations((prevState) => ({
-        ...prevState,
-        result: calculations.value1 - calculations.value2,
-      }));
-    }
-    if (calculations.operand === "x") {
-      setCalculations((prevState) => ({
-        ...prevState,
-        result: calculations.value1 * calculations.value2,
-      }));
-    }
-    if (calculations.operand === "÷") {
-      setCalculations((prevState) => ({
-        ...prevState,
-        result: calculations.value1 / calculations.value2,
-      }));
+    switch (calculations.operand) {
+      case "+":
+        setCalculations((prevState) => ({
+          ...prevState,
+          result: value1 + value2,
+        }));
+        break;
+      case "-":
+        setCalculations((prevState) => ({
+          ...prevState,
+          result: value1 - value2,
+        }));
+        break;
+      case "x":
+        setCalculations((prevState) => ({
+          ...prevState,
+          result: value1 * value2,
+        }));
+        break;
+      case "÷":
+        if (value2 === 0) {
+          setCalculations((prevState) => ({
+            ...prevState,
+            result: "Error: Divide by zero",
+          }));
+        } else {
+          setCalculations((prevState) => ({
+            ...prevState,
+            result: value1 / value2,
+          }));
+        }
+        break;
+      default:
+        break;
     }
   };
 
@@ -65,6 +79,21 @@ function App() {
         ...prevState,
         operand: "",
       }));
+    } else if (calculations.value1 && textContent === "ᐊ") {
+      if (calculations.value1.length === 1) {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value1: "0",
+          operand: "",
+          value2: "",
+          result: "",
+        }));
+      } else {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value1: prevState.value1.toString().slice(0, -1),
+        }));
+      }
     } else if (calculations.result && !isNaN(parseInt(textContent))) {
       clear();
       setCalculations((prevState) => ({
@@ -96,8 +125,7 @@ function App() {
         textContent === "÷")
     ) {
       setIsResult(false);
-      equal()
-      // console.log('calculations')
+      equal();
       setCalculations((prevState) => ({
         ...prevState,
         value1: prevState.result,
