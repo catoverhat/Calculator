@@ -79,19 +79,36 @@ function App() {
         ...prevState,
         operand: "",
       }));
-    } else if (calculations.value1 && textContent === "ᐊ") {
+    } else if (
+      calculations.value1 &&
+      !calculations.value2 &&
+      textContent === "ᐊ"
+    ) {
       if (calculations.value1.length === 1) {
         setCalculations((prevState) => ({
           ...prevState,
           value1: "0",
-          operand: "",
-          value2: "",
-          result: "",
         }));
       } else {
         setCalculations((prevState) => ({
           ...prevState,
           value1: prevState.value1.toString().slice(0, -1),
+        }));
+      }
+    } else if (
+      calculations.value2 &&
+      !calculations.result &&
+      textContent === "ᐊ"
+    ) {
+      if (calculations.value2.length === 1) {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value2: "0",
+        }));
+      } else {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value2: prevState.value2.toString().slice(0, -1),
         }));
       }
     } else if (calculations.result && !isNaN(parseInt(textContent))) {
