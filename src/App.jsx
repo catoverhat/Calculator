@@ -7,10 +7,11 @@ import "./App.css";
 function App() {
   const [smallDisplayValues, setSmallDisplayValues] = useState([]);
   const [isResult, setIsResult] = useState(false);
+  const [isValue, setIsValue] = useState(false);
   const [calculations, setCalculations] = useState({
     value1: "0",
     operand: "",
-    value2: "",
+    value2: "0",
     result: "",
   });
 
@@ -21,8 +22,15 @@ function App() {
       ...prevState,
       value1: "0",
       operand: "",
-      value2: "",
+      value2: "0",
       result: "",
+    }));
+  };
+
+  const updateCalculations = (newCalculations) => {
+    setCalculations((prevState) => ({
+      ...prevState,
+      ...newCalculations,
     }));
   };
 
@@ -32,37 +40,25 @@ function App() {
 
     switch (calculations.operand) {
       case "+":
-        setCalculations((prevState) => ({
-          ...prevState,
+        updateCalculations({
           result: value1 + value2,
-        }));
-        return value1 + value2; // Return the result
+        });
+        return value1 + value2;
       case "-":
-        setCalculations((prevState) => ({
-          ...prevState,
+        updateCalculations({
           result: value1 - value2,
-        }));
-        return value1 - value2; // Return the result
+        });
+        return value1 - value2;
       case "x":
-        setCalculations((prevState) => ({
-          ...prevState,
+        updateCalculations({
           result: value1 * value2,
-        }));
-        return value1 * value2; // Return the result
+        });
+        return value1 * value2;
       case "÷":
-        if (value2 === 0) {
-          setCalculations((prevState) => ({
-            ...prevState,
-            result: "Error: Divide by zero",
-          }));
-          return "Error: Divide by zero"; // Return the error message
-        } else {
-          setCalculations((prevState) => ({
-            ...prevState,
-            result: value1 / value2,
-          }));
-          return value1 / value2; // Return the result
-        }
+        updateCalculations({
+          result: value1 / value2,
+        });
+        return value1 / value2;
       default:
         break;
     }
@@ -75,18 +71,28 @@ function App() {
       calculations.value2 &&
       textContent === "="
     ) {
+      console.log(calculations.value2);
       setIsResult(true);
-      handleEqual();
+      setIsValue(false);
       setCalculations((prevState) => ({
         ...prevState,
         operand: "",
       }));
-      setSmallDisplayValues([
-        `${calculations.value1} ${calculations.operand} ${calculations.value2} =`,
-      ]);
+      if (calculations.value2 === "0") {
+        setCalculations((prevState) => ({
+          ...prevState,
+          result: "Error: Divide by zero",
+        }));
+        setSmallDisplayValues([]);
+      } else {
+        handleEqual();
+        setSmallDisplayValues([
+          `${calculations.value1} ${calculations.operand} ${calculations.value2} =`,
+        ]);
+      }
     } else if (
       calculations.value1 &&
-      !calculations.value2 &&
+      calculations.value2 === "0" &&
       textContent === "ᐊ"
     ) {
       if (calculations.value1.length === 1) {
@@ -134,7 +140,7 @@ function App() {
         ...prevState,
         value1: prevState.result,
         operand: textContent,
-        value2: "",
+        value2: "0",
         result: "",
       }));
       setSmallDisplayValues([`${calculations.result} ${textContent}`]);
@@ -148,6 +154,7 @@ function App() {
         textContent === "÷")
     ) {
       setIsResult(false);
+      setIsValue(false);
       const result = handleEqual();
 
       setSmallDisplayValues([`${result} ${textContent}`]);
@@ -155,9 +162,24 @@ function App() {
         ...prevState,
         value1: prevState.result,
         operand: textContent,
-        value2: "",
+        value2: "0",
         result: "",
       }));
+    } else if (calculations.operand && textContent === ".") {
+      setIsValue(true);
+      if (!String(calculations.value2).includes(".")) {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value2: prevState.value2 + textContent,
+        }));
+      }
+    } else if (calculations.value1 && textContent === ".") {
+      if (!String(calculations.value1).includes(".")) {
+        setCalculations((prevState) => ({
+          ...prevState,
+          value1: prevState.value1 + textContent,
+        }));
+      }
     } else if (
       calculations.value1 &&
       (textContent === "+" ||
@@ -172,20 +194,22 @@ function App() {
 
       setSmallDisplayValues([`${calculations.value1} ${textContent}`]);
     } else if (calculations.operand && !isNaN(parseFloat(textContent))) {
+      setIsValue(true);
       setCalculations((prevState) => ({
         ...prevState,
-        value2: parseFloat(prevState.value2 + textContent),
+        value2: String(parseFloat(prevState.value2 + textContent)),
       }));
     } else if (!isNaN(parseFloat(textContent))) {
+      setIsValue(false);
       setCalculations((prevState) => ({
         ...prevState,
-        value1: parseFloat(prevState.value1 + textContent),
+        value1: String(parseFloat(prevState.value1 + textContent)),
       }));
     }
     if (textContent === "clear") {
       clear();
     }
-    console.log(calculations);
+    // console.log(calculations);
   };
 
   return (
@@ -195,7 +219,7 @@ function App() {
         displayValues={
           isResult
             ? calculations.result
-            : calculations.value2
+            : isValue
             ? calculations.value2
             : calculations.value1
         }
