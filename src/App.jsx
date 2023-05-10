@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Body from "./components/body";
+// import Body from "./components/body";
 import Screen from "./components/Screen";
 import Buttons from "./components/Buttons";
 import Githublogo from "./assets/githublogo";
@@ -214,7 +214,7 @@ function App() {
   };
 
   return (
-    <Body>
+    <main>
       <Screen
         smallDisplayValues={smallDisplayValues}
         displayValues={
@@ -230,7 +230,7 @@ function App() {
         <h4>Copyright &copy; 2023 catoverhat</h4>
         <Githublogo />
       </footer>
-    </Body>
+    </main>
   );
 }
 
