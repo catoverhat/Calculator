@@ -2,6 +2,7 @@ import { useState } from "react";
 import Body from "./components/body";
 import Screen from "./components/Screen";
 import Buttons from "./components/Buttons";
+import Githublogo from "./assets/githublogo";
 import "./App.css";
 
 function App() {
@@ -225,6 +226,10 @@ function App() {
         }
       />
       <Buttons buttonClicked={handleButtonClicked} />
+      <footer>
+        <h4>Copyright &copy; 2023 catoverhat</h4>
+        <Githublogo />
+      </footer>
     </Body>
   );
 }
