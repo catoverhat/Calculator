@@ -5,7 +5,7 @@ import Buttons from "./components/Buttons";
 import "./App.css";
 
 function App() {
-  const [smallDisplayValue, setSmallDisplayValue] = useState([]);
+  const [smallDisplayValues, setSmallDisplayValues] = useState([]);
   const [isResult, setIsResult] = useState(false);
   const [calculations, setCalculations] = useState({
     value1: "0",
@@ -16,6 +16,7 @@ function App() {
 
   const clear = () => {
     setIsResult(false);
+    setSmallDisplayValues([]);
     setCalculations((prevState) => ({
       ...prevState,
       value1: "0",
@@ -25,7 +26,7 @@ function App() {
     }));
   };
 
-  const equal = () => {
+  const handleEqual = () => {
     const value1 = parseFloat(calculations.value1);
     const value2 = parseFloat(calculations.value2);
 
@@ -35,32 +36,33 @@ function App() {
           ...prevState,
           result: value1 + value2,
         }));
-        break;
+        return value1 + value2; // Return the result
       case "-":
         setCalculations((prevState) => ({
           ...prevState,
           result: value1 - value2,
         }));
-        break;
+        return value1 - value2; // Return the result
       case "x":
         setCalculations((prevState) => ({
           ...prevState,
           result: value1 * value2,
         }));
-        break;
+        return value1 * value2; // Return the result
       case "÷":
         if (value2 === 0) {
           setCalculations((prevState) => ({
             ...prevState,
             result: "Error: Divide by zero",
           }));
+          return "Error: Divide by zero"; // Return the error message
         } else {
           setCalculations((prevState) => ({
             ...prevState,
             result: value1 / value2,
           }));
+          return value1 / value2; // Return the result
         }
-        break;
       default:
         break;
     }
@@ -74,11 +76,14 @@ function App() {
       textContent === "="
     ) {
       setIsResult(true);
-      equal();
+      handleEqual();
       setCalculations((prevState) => ({
         ...prevState,
         operand: "",
       }));
+      setSmallDisplayValues([
+        `${calculations.value1} ${calculations.operand} ${calculations.value2} =`,
+      ]);
     } else if (
       calculations.value1 &&
       !calculations.value2 &&
@@ -111,11 +116,11 @@ function App() {
           value2: prevState.value2.toString().slice(0, -1),
         }));
       }
-    } else if (calculations.result && !isNaN(parseInt(textContent))) {
+    } else if (calculations.result && !isNaN(parseFloat(textContent))) {
       clear();
       setCalculations((prevState) => ({
         ...prevState,
-        value1: parseInt(prevState.value1 + textContent),
+        value1: parseFloat(prevState.value1 + textContent),
       }));
     } else if (
       calculations.result &&
@@ -132,6 +137,7 @@ function App() {
         value2: "",
         result: "",
       }));
+      setSmallDisplayValues([`${calculations.result} ${textContent}`]);
     } else if (
       calculations.value1 &&
       calculations.operand &&
@@ -142,7 +148,9 @@ function App() {
         textContent === "÷")
     ) {
       setIsResult(false);
-      equal();
+      const result = handleEqual();
+
+      setSmallDisplayValues([`${result} ${textContent}`]);
       setCalculations((prevState) => ({
         ...prevState,
         value1: prevState.result,
@@ -161,15 +169,17 @@ function App() {
         ...prevState,
         operand: textContent,
       }));
-    } else if (calculations.operand && !isNaN(parseInt(textContent))) {
+
+      setSmallDisplayValues([`${calculations.value1} ${textContent}`]);
+    } else if (calculations.operand && !isNaN(parseFloat(textContent))) {
       setCalculations((prevState) => ({
         ...prevState,
-        value2: parseInt(prevState.value2 + textContent),
+        value2: parseFloat(prevState.value2 + textContent),
       }));
-    } else if (!isNaN(parseInt(textContent))) {
+    } else if (!isNaN(parseFloat(textContent))) {
       setCalculations((prevState) => ({
         ...prevState,
-        value1: parseInt(prevState.value1 + textContent),
+        value1: parseFloat(prevState.value1 + textContent),
       }));
     }
     if (textContent === "clear") {
@@ -181,7 +191,8 @@ function App() {
   return (
     <Body>
       <Screen
-        displayButtons={
+        smallDisplayValues={smallDisplayValues}
+        displayValues={
           isResult
             ? calculations.result
             : calculations.value2
