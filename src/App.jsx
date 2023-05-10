@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import Body from "./components/body";
 import Screen from "./components/Screen";
 import Buttons from "./components/Buttons";
 import Githublogo from "./assets/githublogo";
